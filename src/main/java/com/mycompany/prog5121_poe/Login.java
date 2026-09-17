@@ -88,6 +88,8 @@ public class Login {
         return "User registered successfully.";
     }
     
+    // Verifies that the entered username and password
+    // match the user's registered login details.
     public boolean loginUser(String enteredUsername, String enteredPassword) {
         
         return username.equals(enteredUsername)
