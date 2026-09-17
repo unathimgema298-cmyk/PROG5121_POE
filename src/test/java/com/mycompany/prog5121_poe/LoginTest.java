@@ -28,7 +28,7 @@ public class LoginTest {
     @Test
     public void testUsernameIncorrectlyFormatted() {
         Login login = new Login(
-                "kyle!!!!!",
+                "kyle!!!!!!!",
                 "Ch&sec@ke99!",
                 "+27838968976",
                 "Kyle",
@@ -114,5 +114,101 @@ public class LoginTest {
         );
 
         assertFalse(login.loginUser("kyle", "password"));
+    }
+    
+        @Test
+    public void testUsernameCorrectlyFormattedMessage() {
+        Login login = new Login(
+                "kyl_1",
+                "Ch&sec@ke99!",
+                "+27838968976",
+                "Kyle",
+                "Smith"
+        );
+
+        assertEquals(
+                "Welcome Kyle Smith, it is great to see you again.",
+                login.returnLoginStatus("kyl_1", "Ch&sec@ke99!")
+        );
+    }
+
+    @Test
+    public void testUsernameIncorrectlyFormattedMessage() {
+        Login login = new Login(
+                "kyle!!!!!!!",
+                "Ch&sec@ke99!",
+                "+27838968976",
+                "Kyle",
+                "Smith"
+        );
+
+        assertEquals(
+                "Username is not correctly formatted; please ensure that your username contains an underscore and is no more than five characters in length.",
+                login.registerUser()
+        );
+    }
+
+    @Test
+    public void testPasswordSuccessfullyCapturedMessage() {
+        Login login = new Login(
+                "kyl_1",
+                "Ch&sec@ke99!",
+                "+27838968976",
+                "Kyle",
+                "Smith"
+        );
+
+        assertEquals(
+                "User registered successfully.",
+                login.registerUser()
+        );
+    }
+
+    @Test
+    public void testPasswordIncorrectlyFormattedMessage() {
+        Login login = new Login(
+                "kyl_1",
+                "password",
+                "+27838968976",
+                "Kyle",
+                "Smith"
+        );
+
+        assertEquals(
+                "Password is not correctly formatted; please ensure that the password contains at least eight characters, a capital letter, a number, and a special character.",
+                login.registerUser()
+        );
+    }
+
+    @Test
+    public void testCellPhoneSuccessfullyCapturedMessage() {
+        Login login = new Login(
+                "kyl_1",
+                "Ch&sec@ke99!",
+                "+27838968976",
+                "Kyle",
+                "Smith"
+        );
+
+        assertEquals(
+                "User registered successfully.",
+                login.registerUser()
+        );
+    }
+
+    @Test
+    public void testCellPhoneIncorrectlyFormattedMessage() {
+        Login login = new Login(
+                "kyl_1",
+                "Ch&sec@ke99!",
+                "08966553",
+                "Kyle",
+                "Smith"
+        );
+
+        assertEquals(
+                "Cell phone number incorrectly formatted or does not contain international code.",
+                login.registerUser()
+        );
     }
 }
