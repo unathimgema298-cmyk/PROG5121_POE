@@ -29,7 +29,8 @@ public class Login {
     public boolean checkUserName() {
         return username.contains("_") && username.length() <= 5;
     }
-    
+    //Checks whether the password meets the required complexity rules:
+    //minimum eight characters, a capital letter, a number and a special character.
     public boolean checkPasswordComplexity() {
         
         boolean hasCapital = false;
