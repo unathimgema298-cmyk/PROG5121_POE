@@ -60,6 +60,8 @@ public class Login {
     //regular expression documentation:
     //https://docs.oracle.com/javase/tutorial/essential/regex/
     
+    // Checks that the cellphone number contains the international
+    // country code followed by exactly nine digits.
     public boolean checkCellPhoneNumber() {
         
         String regex = "^\\+27\\d{9}$";
