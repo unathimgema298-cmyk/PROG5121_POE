@@ -69,6 +69,8 @@ public class Login {
         return Pattern.matches(regex, cellPhoneNumber);
     }
     
+    // Registers the user after validating the username, password
+    // and cellphone number, and returns the appropriate registration message.
     public String registerUser() {
         
         if (!checkUserName()) {
