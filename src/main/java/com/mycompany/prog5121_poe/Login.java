@@ -24,7 +24,8 @@ public class Login {
         this.firstName = firstName;
         this.lastName = lastName;
     }
-    
+    //Checks that the username contains an underscore
+    //and is no more than five characters long.
     public boolean checkUserName() {
         return username.contains("_") && username.length() <= 5;
     }
