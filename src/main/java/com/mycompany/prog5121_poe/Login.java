@@ -96,6 +96,8 @@ public class Login {
                 && password.equals(enteredPassword);
     }
     
+    // Returns a welcome message when the login details are correct,
+    // otherwise returns an error message.
     public String returnLoginStatus(String enteredUsername, String enteredPassword) {
         
         if (loginUser(enteredUsername, enteredPassword)) {
