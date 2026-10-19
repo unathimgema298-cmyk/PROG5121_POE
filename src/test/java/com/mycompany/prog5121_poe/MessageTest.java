@@ -143,7 +143,7 @@ public class MessageTest {
         );
 
         assertEquals(
-                "Message disregarded.",
+                "Press 0 to delete the message.",
                 message.SentMessage("Disregard")
         );
     }
