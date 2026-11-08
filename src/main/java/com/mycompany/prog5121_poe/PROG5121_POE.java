@@ -54,10 +54,11 @@ public class PROG5121_POE {
                 System.out.println("1. Send Messages");
                 System.out.println("2. Show Recently Sent Messages");
                 System.out.println("3. Quit");
+                System.out.println("4. Stored Messages");
                 System.out.print("Choose an option: ");
 
                 while (!input.hasNextInt()) {
-                    System.out.println("Invalid input. Enter 1, 2 or 3.");
+                    System.out.println("Invalid input. Enter a valid menu option (1-4).");
                     input.nextLine();
                 }
                 
@@ -81,6 +82,8 @@ public class PROG5121_POE {
                                 recipient,
                                 messageText
                         );
+                        
+                        message.setSender(firstName + " " + lastName);
 
                         String recipientStatus = message.checkRecipientCell();
                         System.out.println(recipientStatus);
@@ -141,6 +144,89 @@ public class PROG5121_POE {
                         System.out.println("Total messages sent: "
                                 + messageHistory.returnTotalMessagess());
                         
+                        break;
+                        
+                    case 4:
+                        int storedChoice;
+
+                        do {
+                            System.out.println("\n--- STORED MESSAGES ---");
+                            System.out.println("1. Display senders and recipients");
+                            System.out.println("2. Display longest stored message");
+                            System.out.println("3. Search message by ID");
+                            System.out.println("4. Search messages by recipient");
+                            System.out.println("5. Delete message using hash");
+                            System.out.println("6. Display full stored messages report");
+                            System.out.println("7. Back to main menu");
+                            System.out.print("Choose an option: ");
+
+                            while (!input.hasNextInt()) {
+                            System.out.println("Invalid input. Enter a number from 1 to 7.");
+                            input.nextLine();
+                            }
+
+                            storedChoice = input.nextInt();
+                            input.nextLine();
+
+                            switch (storedChoice) {
+                                case 1:
+                                    System.out.println(
+                                        Message.displayStoredSendersAndRecipients());
+                                    break;
+
+                                case 2:
+                                    System.out.println("Longest stored message:");
+                                    System.out.println(Message.getLongestStoredMessage());
+                                    break;
+
+                                case 3:
+                                    System.out.print("Enter message ID: ");
+                                    String searchID = input.nextLine();
+
+                                    Message foundMessage =
+                                            Message.searchMessageByID(searchID);
+
+                                    if (foundMessage != null) {
+                                        System.out.println("Recipient: "
+                                            + foundMessage.getRecipient());
+                                        System.out.println("Message: "
+                                            + foundMessage.getMessageText());
+                                    } else {
+                                        System.out.println("Message ID not found.");
+                                    }
+                                    break;
+
+                                case 4:
+                                    System.out.print("Enter recipient number: ");
+                                    String searchRecipient = input.nextLine();
+
+                                    System.out.println(
+                                            Message.searchMessagesByRecipient(searchRecipient));
+                                    break;
+
+                                case 5:
+                                    System.out.print("Enter message hash: ");
+                                    String searchHash = input.nextLine();
+
+                                    System.out.println(
+                                            Message.deleteMessageByHash(searchHash));
+                                    break;
+
+                                case 6:
+                                    System.out.println(
+                                            Message.generateStoredMessagesReport());
+                                    break;
+
+                                case 7:
+                                    System.out.println("Returning to main menu.");
+                                    break;
+
+                                default:
+                                    System.out.println("Invalid option. Choose 1 to 7.");
+                            }
+
+                        } while (storedChoice != 7);
+
                         break;
 
                     case 3:
