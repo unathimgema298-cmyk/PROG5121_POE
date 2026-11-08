@@ -30,6 +30,9 @@ public class Message {
     private static ArrayList<String> disregardedMessages = new ArrayList<>();
     private static ArrayList<Message> storedMessages = new ArrayList<>();
 
+    private static ArrayList<String> messageHashes = new ArrayList<>();
+    private static ArrayList<String> messageIDs = new ArrayList<>();
+
     private static final String FILE_NAME = "messages.jsonl";
     private static final Gson gson = new Gson();
 
@@ -110,6 +113,23 @@ public class Message {
             return "Invalid option. Please try again.";
         }
 
+        if (!choice.equalsIgnoreCase("Send")
+                && !choice.equalsIgnoreCase("Store")
+                && !choice.equalsIgnoreCase("Disregard")) {
+            return "Invalid option. Please try again.";
+        }
+
+        if (checkMessageID() && !messageIDs.contains(messageID)) {
+            messageIDs.add(messageID);
+        }
+
+        if (messageHash != null
+                && !messageHash.isEmpty()
+                && !messageHash.equals("Invalid message")
+                && !messageHashes.contains(messageHash)) {
+            messageHashes.add(messageHash);
+        }
+
         if (choice.equalsIgnoreCase("Send")) {
             totalMessagesSent++;
             sentMessages.add(messageText);
@@ -119,13 +139,10 @@ public class Message {
         } else if (choice.equalsIgnoreCase("Store")) {
             return storeMessage();
 
-        } else if (choice.equalsIgnoreCase("Disregard")) {
+        } else {
             disregardedMessages.add(messageText);
 
             return "Press 0 to delete the message.";
-
-        } else {
-            return "Invalid option. Please try again.";
         }
     }
 
@@ -161,28 +178,38 @@ public class Message {
 
     // Returns all stored message hashes
     public static String[] getMessageHashesArray() {
+
         loadStoredMessages();
 
-        String[] hashes = new String[storedMessages.size()];
+        ArrayList<String> allHashes = new ArrayList<>(messageHashes);
 
-        for (int i = 0; i < storedMessages.size(); i++) {
-            hashes[i] = storedMessages.get(i).messageHash;
+        for (Message message : storedMessages) {
+            if (message.messageHash != null
+                    && !message.messageHash.isEmpty()
+                    && !allHashes.contains(message.messageHash)) {
+                allHashes.add(message.messageHash);
+            }
         }
 
-        return hashes;
+        return allHashes.toArray(new String[0]);
     }
 
     // Returns all stored message IDs
     public static String[] getMessageIDsArray() {
+
         loadStoredMessages();
 
-        String[] ids = new String[storedMessages.size()];
+        ArrayList<String> allIDs = new ArrayList<>(messageIDs);
 
-        for (int i = 0; i < storedMessages.size(); i++) {
-            ids[i] = storedMessages.get(i).messageID;
+        for (Message message : storedMessages) {
+            if (message.messageID != null
+                    && !message.messageID.isEmpty()
+                    && !allIDs.contains(message.messageID)) {
+                allIDs.add(message.messageID);
+            }
         }
 
-        return ids;
+        return allIDs.toArray(new String[0]);
     }
 
     // Stores the message in a JSON Lines file

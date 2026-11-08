@@ -228,4 +228,293 @@ public class MessageTest {
             }
         }
     }
+    
+    
+    // Test 13: Sent messages array
+    @Test
+    public void testSentMessagesArray() {
+        String uniqueText = "SentArray" + System.nanoTime();
+
+        Message message = new Message(
+                1, "+27834557896", uniqueText
+        );
+
+        message.createMessageID();
+        message.createMessageHash();
+        message.SentMessage("Send");
+
+        assertTrue(
+                java.util.Arrays.asList(
+                        Message.getSentMessagesArray()
+                ).contains(uniqueText)
+        );
+    }
+
+    // Test 14: Disregarded messages array
+    @Test
+    public void testDisregardedMessagesArray() {
+        String uniqueText = "DisregardedArray" + System.nanoTime();
+
+        Message message = new Message(
+                2, "+27834484567", uniqueText
+        );
+
+        message.createMessageID();
+        message.createMessageHash();
+        message.SentMessage("Disregard");
+
+        assertTrue(
+                java.util.Arrays.asList(
+                        Message.getDisregardedMessagesArray()
+                ).contains(uniqueText)
+        );
+    }
+
+    // Test 15: Stored messages, hashes and IDs arrays
+    @Test
+    public void testStoredMessagesArrays() throws IOException {
+        Path file = Path.of("messages.jsonl");
+        byte[] originalContent = backupStoredFile(file);
+
+        try {
+            Message message = new Message(
+                    3, "+27838884567", "StoredArrayTest"
+            );
+
+            message.createMessageID();
+            message.createMessageHash();
+
+            assertEquals(
+                    "Message successfully stored.",
+                    message.storeMessage()
+            );
+
+            assertTrue(
+                    java.util.Arrays.asList(
+                            Message.getStoredMessagesArray()
+                    ).stream().anyMatch(
+                            stored -> stored.getMessageID().equals(
+                                    message.getMessageID()
+                            )
+                    )
+            );
+
+            assertTrue(
+                    java.util.Arrays.asList(
+                            Message.getMessageIDsArray()
+                    ).contains(message.getMessageID())
+            );
+
+            assertTrue(
+                    java.util.Arrays.asList(
+                            Message.getMessageHashesArray()
+                    ).contains(message.getMessageHash())
+            );
+
+        } finally {
+            restoreStoredFile(file, originalContent);
+        }
+    }
+
+    private byte[] backupStoredFile(Path file) throws IOException {
+        return Files.exists(file)
+                ? Files.readAllBytes(file)
+                : null;
+    }
+
+    private void restoreStoredFile(
+            Path file, byte[] originalContent
+    ) throws IOException {
+        if (originalContent == null) {
+            Files.deleteIfExists(file);
+        } else {
+            Files.write(file, originalContent);
+        }
+    }
+    
+    // Helper: creates and stores a test message
+    private Message createStoredTestMessage(
+            int number, String recipient, String text, String sender) {
+
+        Message message = new Message(number, recipient, text);
+        message.setSender(sender);
+        message.createMessageID();
+        message.createMessageHash();
+
+        assertEquals(
+                "Message successfully stored.",
+                message.storeMessage()
+        );
+
+        return message;
+    }
+
+    // Test 16: Display stored senders and recipients
+    @Test
+    public void testDisplayStoredSendersAndRecipients()
+            throws IOException {
+
+        Path file = Path.of("messages.jsonl");
+        byte[] originalContent = backupStoredFile(file);
+
+        try {
+            createStoredTestMessage(
+                    1, "+27834557896",
+                    "Sender display test", "Test Sender"
+            );
+
+            String result =
+                    Message.displayStoredSendersAndRecipients();
+
+            assertTrue(result.contains("Test Sender"));
+            assertTrue(result.contains("+27834557896"));
+
+        } finally {
+            restoreStoredFile(file, originalContent);
+        }
+    }
+
+    // Test 17: Find the longest stored message
+    @Test
+    public void testGetLongestStoredMessage()
+            throws IOException {
+
+        Path file = Path.of("messages.jsonl");
+        byte[] originalContent = backupStoredFile(file);
+
+        try {
+            String longestText =
+                    "This is the longest stored message for testing.";
+
+            createStoredTestMessage(
+                    1, "+27834557896", "Short message", "Sender"
+            );
+
+            createStoredTestMessage(
+                    2, "+27838884567", longestText, "Sender"
+            );
+
+            assertEquals(
+                    longestText,
+                    Message.getLongestStoredMessage()
+            );
+
+        } finally {
+            restoreStoredFile(file, originalContent);
+        }
+    }
+
+    // Test 18: Search for a message using its ID
+    @Test
+    public void testSearchMessageByID()
+            throws IOException {
+
+        Path file = Path.of("messages.jsonl");
+        byte[] originalContent = backupStoredFile(file);
+
+        try {
+            Message message = createStoredTestMessage(
+                    1, "+27834557896",
+                    "Search by ID test", "Sender"
+            );
+
+            Message result =
+                    Message.searchMessageByID(message.getMessageID());
+
+            assertNotNull(result);
+            assertEquals(message.getMessageText(),
+                    result.getMessageText());
+
+        } finally {
+            restoreStoredFile(file, originalContent);
+        }
+    }
+
+    // Test 19: Search stored messages by recipient
+    @Test
+    public void testSearchMessagesByRecipient()
+            throws IOException {
+
+        Path file = Path.of("messages.jsonl");
+        byte[] originalContent = backupStoredFile(file);
+
+        try {
+            createStoredTestMessage(
+                    1, "+27838884567",
+                    "First recipient message", "Sender"
+            );
+
+            createStoredTestMessage(
+                    2, "+27838884567",
+                    "Second recipient message", "Sender"
+            );
+
+            String result =
+                    Message.searchMessagesByRecipient("+27838884567");
+
+            assertTrue(result.contains("First recipient message"));
+            assertTrue(result.contains("Second recipient message"));
+
+        } finally {
+            restoreStoredFile(file, originalContent);
+        }
+    }
+
+    // Test 20: Delete a stored message using its hash
+    @Test
+    public void testDeleteMessageByHash()
+            throws IOException {
+
+        Path file = Path.of("messages.jsonl");
+        byte[] originalContent = backupStoredFile(file);
+
+        try {
+            Message message = createStoredTestMessage(
+                    1, "+27834557896",
+                    "Delete by hash test", "Sender"
+            );
+
+            String result =
+                    Message.deleteMessageByHash(
+                            message.getMessageHash()
+                    );
+
+            assertTrue(result.contains("successfully deleted"));
+            assertNull(
+                    Message.searchMessageByID(message.getMessageID())
+            );
+
+        } finally {
+            restoreStoredFile(file, originalContent);
+        }
+    }
+
+    // Test 21: Generate the full stored messages report
+    @Test
+    public void testGenerateStoredMessagesReport()
+            throws IOException {
+
+        Path file = Path.of("messages.jsonl");
+        byte[] originalContent = backupStoredFile(file);
+
+        try {
+            Message message = createStoredTestMessage(
+                    1, "+27834557896",
+                    "Full report test", "Report Sender"
+            );
+
+            String report =
+                    Message.generateStoredMessagesReport();
+
+            assertTrue(report.contains(message.getMessageID()));
+            assertTrue(report.contains(message.getMessageHash()));
+            assertTrue(report.contains("Report Sender"));
+            assertTrue(report.contains("+27834557896"));
+            assertTrue(report.contains("Full report test"));
+
+        } finally {
+            restoreStoredFile(file, originalContent);
+        }
+    }
+
 }
