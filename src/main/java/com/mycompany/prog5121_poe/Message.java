@@ -375,12 +375,17 @@ public class Message {
     // Deletes a stored message using its hash
     public static String deleteMessageByHash(String hash) {
 
+        if (hash == null || hash.trim().isEmpty()) {
+            return "Message hash cannot be empty.";
+        }
+
         loadStoredMessages();
 
         Message messageToDelete = null;
 
         for (Message message : storedMessages) {
-            if (message.messageHash.equals(hash)) {
+            if (message.messageHash != null
+                    && message.messageHash.equals(hash)) {
                 messageToDelete = message;
                 break;
             }
@@ -390,19 +395,30 @@ public class Message {
             return "Message not found.";
         }
 
+        int originalIndex = storedMessages.indexOf(messageToDelete);
+
+        storedMessages.remove(messageToDelete);
+
         try {
-            String deletedText = messageToDelete.messageText;
-
-            storedMessages.remove(messageToDelete);
-
             saveStoredMessages();
 
-            return "Message: “" + deletedText
-                    + "” successfully deleted.";
-
         } catch (IOException e) {
+            storedMessages.add(originalIndex, messageToDelete);
             return "Error deleting message: " + e.getMessage();
         }
+
+        // Remove the deleted message from the other collections.
+        final String deletedID = messageToDelete.messageID;
+        final String deletedHash = messageToDelete.messageHash;
+
+        messageHashes.remove(deletedHash);
+        messageIDs.remove(deletedID);
+
+        allMessages.removeIf(message ->
+                deletedID.equals(message.messageID));
+
+        return "Message: “" + messageToDelete.messageText
+                + "” successfully deleted.";
     }
 
     // Displays the full report of stored messages
