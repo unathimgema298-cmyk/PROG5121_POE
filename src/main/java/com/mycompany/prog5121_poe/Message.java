@@ -29,6 +29,7 @@ public class Message {
     private static ArrayList<String> sentMessages = new ArrayList<>();
     private static ArrayList<String> disregardedMessages = new ArrayList<>();
     private static ArrayList<Message> storedMessages = new ArrayList<>();
+    private static ArrayList<Message> allMessages = new ArrayList<>();
 
     private static ArrayList<String> messageHashes = new ArrayList<>();
     private static ArrayList<String> messageIDs = new ArrayList<>();
@@ -126,8 +127,12 @@ public class Message {
         if (messageHash != null
                 && !messageHash.isEmpty()
                 && !messageHash.equals("Invalid message")
-                && !messageHashes.contains(messageHash)) {
+                && !messageHashes.contains(messageHash)){
             messageHashes.add(messageHash);
+        }
+        
+        if (!allMessages.contains(this)) {
+            allMessages.add(this);
         }
 
         if (choice.equalsIgnoreCase("Send")) {
@@ -320,11 +325,18 @@ public class Message {
 
     // Searches for a stored message using its ID
     public static Message searchMessageByID(String id) {
+        loadStoredMessages(); 
 
-        loadStoredMessages();
+        // Search messages stored during the current session.
+        for (Message message : allMessages) {
+            if (message.getMessageID().equals(id)) {
+                return message;
+            }
+        }
 
+        // Also search messages loaded from the JSON file.
         for (Message message : storedMessages) {
-            if (message.messageID.equals(id)) {
+            if (message.getMessageID().equals(id)) {
                 return message;
             }
         }
