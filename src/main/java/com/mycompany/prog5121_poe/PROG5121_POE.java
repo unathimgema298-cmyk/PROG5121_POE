@@ -182,6 +182,11 @@ public class PROG5121_POE {
                                 case 3:
                                     System.out.print("Enter message ID: ");
                                     String searchID = input.nextLine();
+                                    
+                                    if (searchID.trim().isEmpty()) {
+                                        System.out.println("Message ID cannot be empty.");
+                                        break;
+                                    }
 
                                     Message foundMessage =
                                             Message.searchMessageByID(searchID);

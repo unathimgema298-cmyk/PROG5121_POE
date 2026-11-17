@@ -325,6 +325,10 @@ public class Message {
 
     // Searches for a stored message using its ID
     public static Message searchMessageByID(String id) {
+        
+        if (id == null || id.trim().isEmpty()) {
+            return null;
+        }
         loadStoredMessages(); 
 
         // Search messages stored during the current session.
