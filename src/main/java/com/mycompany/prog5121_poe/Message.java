@@ -350,6 +350,10 @@ public class Message {
 
     // Searches stored messages using the recipient's number
     public static String searchMessagesByRecipient(String number) {
+        
+        if (number == null || number.trim().isEmpty()) {
+            return "Recipient number cannot be empty.";
+        }
 
         loadStoredMessages();
 
