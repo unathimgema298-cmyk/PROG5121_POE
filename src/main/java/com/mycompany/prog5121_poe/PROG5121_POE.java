@@ -53,8 +53,8 @@ public class PROG5121_POE {
                 System.out.println("\n--- QUICKCHAT MENU ---");
                 System.out.println("1. Send Messages");
                 System.out.println("2. Show Recently Sent Messages");
-                System.out.println("3. Quit");
-                System.out.println("4. Stored Messages");
+                System.out.println("3. Stored Messages");
+                System.out.println("4. Quit");
                 System.out.print("Choose an option: ");
 
                 while (!input.hasNextInt()) {
@@ -146,7 +146,7 @@ public class PROG5121_POE {
                         
                         break;
                         
-                    case 4:
+                    case 3:
                         int storedChoice;
 
                         do {
@@ -229,7 +229,7 @@ public class PROG5121_POE {
 
                         break;
 
-                    case 3:
+                    case 4:
                         System.out.println("Goodbye!");
                         break;
 
@@ -237,7 +237,7 @@ public class PROG5121_POE {
                         System.out.println("Invalid option. Try again.");
                 }
 
-            } while (choice != 3);
+            } while (choice != 4);
     
         } else {
             System.out.println("You must login successfully to use QuikChat.");
